@@ -1,0 +1,7 @@
+{
+  "name": "Quản lý Thi đua Giáo viên - TH&THCS Nguyễn Đình Anh",
+  "description": "Hệ thống quản lý thi đua nội bộ, thẩm định minh chứng điện tử, tự động tổng hợp điểm và xếp loại năm học 2026-2027",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
+
