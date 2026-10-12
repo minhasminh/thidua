@@ -1,0 +1,17 @@
+---
+# Cấu hình cPanel Git Auto Deploy cho ứng dụng React Vite SPA
+# Hướng dẫn:
+# 1. Thay thế giá trị DEPLOYPATH nếu Document Root của bạn khác /home/$USER/public_html
+#    - Đối với tên miền chính (Primary Domain): /home/$USER/public_html
+#    - Đối với Subdomain hoặc Addon Domain: /home/$USER/public_html/ten_subdomain hoặc /home/$USER/ten_subdomain
+# 2. Quy trình:
+#    - Nếu mã nguồn trên GitHub chưa có dist/, hãy chạy build trên cPanel Terminal hoặc dùng GitHub Actions
+#    - Lệnh cp sao chép toàn bộ tệp tĩnh từ dist/ và .htaccess vào Document Root
+deployment:
+  tasks:
+    - export DEPLOYPATH=/home/$USER/public_html
+    - /bin/mkdir -p $DEPLOYPATH
+    - export PATH=$PATH:/usr/local/bin:/usr/bin:/bin:~/.nvm/versions/node/$(ls ~/.nvm/versions/node 2>/dev/null | tail -n 1)/bin
+    - if [ ! -d "dist" ] && which npm >/dev/null 2>&1; then npm run build; fi
+    - if [ -d "dist" ]; then /bin/cp -a dist/. $DEPLOYPATH/; fi
+    - if [ -f "public/.htaccess" ]; then /bin/cp public/.htaccess $DEPLOYPATH/.htaccess; fi

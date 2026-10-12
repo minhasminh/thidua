@@ -1,0 +1,50 @@
+# Apache configuration for Vite React Single Page Application (SPA) on cPanel
+# Tệp cấu hình Apache cho ứng dụng React Vite SPA trên cPanel
+
+<IfModule mod_rewrite.c>
+  RewriteEngine On
+  RewriteBase /
+
+  # 1. Thiết lập tệp chỉ mục mặc định là index.html
+  DirectoryIndex index.html
+
+  # 2. Không chuyển hướng nếu yêu cầu trùng với tệp thực tế đang tồn tại (CSS, JS, ảnh, v.v.)
+  RewriteCond %{REQUEST_FILENAME} -f [OR]
+  RewriteCond %{REQUEST_FILENAME} -d
+  RewriteRule ^ - [L]
+
+  # 3. Chuyển hướng tất cả các yêu cầu còn lại về index.html (SPA Fallback - Khắc phục lỗi 404 khi tải lại trang)
+  RewriteRule ^ index.html [L]
+</IfModule>
+
+# MIME Types cho các định dạng tệp JavaScript hiện đại và tài nguyên web
+<IfModule mod_mime.c>
+  AddType application/javascript .js .mjs
+  AddType text/css .css
+  AddType image/svg+xml .svg
+  AddType application/json .json
+  AddType font/woff2 .woff2
+  AddType font/woff .woff
+</IfModule>
+
+# Ngăn chặn duyệt danh sách thư mục (Directory Listing)
+Options -Indexes
+
+# Cấu hình bảo mật và tránh cache tệp index.html để luôn nhận phiên bản mới nhất sau khi deploy
+<IfModule mod_headers.c>
+  Header set X-Content-Type-Options "nosniff"
+  Header set X-Frame-Options "SAMEORIGIN"
+  Header set Referrer-Policy "strict-origin-when-cross-origin"
+
+  # Không cache index.html để người dùng luôn nhận bản cập nhật mới nhất
+  <Files "index.html">
+    Header set Cache-Control "no-cache, no-store, must-revalidate"
+    Header set Pragma "no-cache"
+    Header set Expires "0"
+  </Files>
+
+  # Cache lâu dài cho các tệp tĩnh có hash trong tên (assets)
+  <FilesMatch "\.(js|css|woff2|woff|svg|png|jpg|jpeg|gif|ico)$">
+    Header set Cache-Control "max-age=31536000, public, immutable"
+  </FilesMatch>
+</IfModule>

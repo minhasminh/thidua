@@ -13,13 +13,15 @@ import {
   Check,
   AlertTriangle,
   Lock,
-  Plus
+  Plus,
+  Server
 } from 'lucide-react';
 import { SystemSettings, User, Department, Role, normalizeRole } from '../types';
 import { storageService } from '../services/storageService';
 import { databaseService } from '../services/databaseService';
 import { UserManagementView } from './UserManagementView';
 import { DepartmentManagementView } from './DepartmentManagementView';
+import { DeploymentDiagnosticView } from './DeploymentDiagnosticView';
 
 interface SystemConfigViewProps {
   currentUser: User;
@@ -30,7 +32,7 @@ export const SystemConfigView: React.FC<SystemConfigViewProps> = ({
   currentUser,
   onRefreshAll
 }) => {
-  const [activeTab, setActiveTab] = useState<'SETTINGS' | 'DEPARTMENTS' | 'TEACHERS' | 'DATABASE' | 'BACKUP' | 'RLS_TEST'>('SETTINGS');
+  const [activeTab, setActiveTab] = useState<'SETTINGS' | 'DEPARTMENTS' | 'TEACHERS' | 'DATABASE' | 'BACKUP' | 'RLS_TEST' | 'DEPLOYMENT'>('SETTINGS');
   const [settings, setSettings] = useState<SystemSettings>(() => storageService.getSettings());
   const [savedSuccess, setSavedSuccess] = useState(false);
   const [copiedSql, setCopiedSql] = useState(false);
@@ -186,6 +188,16 @@ export const SystemConfigView: React.FC<SystemConfigViewProps> = ({
           }`}
         >
           <Lock className="w-3.5 h-3.5" /> Kiểm tra RLS & Phân quyền
+        </button>
+        <button
+          onClick={() => setActiveTab('DEPLOYMENT')}
+          className={`py-2.5 px-4 font-bold text-xs border-b-2 transition-all cursor-pointer flex items-center gap-1.5 ${
+            activeTab === 'DEPLOYMENT'
+              ? 'border-blue-600 text-blue-700'
+              : 'border-transparent text-slate-500 hover:text-slate-800'
+          }`}
+        >
+          <Server className="w-3.5 h-3.5 text-amber-600" /> Chẩn đoán Triển khai & cPanel
         </button>
       </div>
 
@@ -697,6 +709,9 @@ export const SystemConfigView: React.FC<SystemConfigViewProps> = ({
           })()}
         </div>
       )}
+
+      {/* Tab: Deployment Diagnostics & cPanel */}
+      {activeTab === 'DEPLOYMENT' && <DeploymentDiagnosticView />}
     </div>
   );
 };
